@@ -2,7 +2,7 @@
 /**
  * Plugin Name: FAQs Shortcode
  * Plugin URI: https://wordpress.org/plugins/faqs-shortcode/
- * Description: A real no brainer for setting up FAQs.
+ * Description: The only FAQs plugin, that actually answers all questions.
  * Version: 0.1
  * Author: Yusri Mathews
  * Author URI: http://yusrimathews.co.za/

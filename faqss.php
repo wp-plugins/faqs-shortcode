@@ -110,164 +110,174 @@ function faqss_scripts_admin(){
 
 add_shortcode( 'faqss', 'faqss_shortcode' );
 function faqss_shortcode( $atts ){
-	$layoutStyle = $atts['layoutstyle'];
-	$hideBanner = isset( $atts['hidebanner'] );
 
-	$emailIcon = isset( $atts['emailicon'] );
-	$emailText = isset( $atts['emailtext'] );
-	$emailLink = isset( $atts['emaillink'] );
+	$page_object = get_post( get_the_ID() ); 
+	$page_content = $page_object->post_content;
 
-	$telIcon = isset( $atts['telicon'] );
-	$telText = isset( $atts['teltext'] );
-	$telLink = isset( $atts['tellink'] );
+	if( is_page( get_the_ID() ) && has_shortcode( $page_content, 'faqss' ) ){
 
-	$docIcon = isset( $atts['docicon'] );
-	$docText = isset( $atts['doctext'] );
-	$docLink = isset( $atts['doclink'] );
+		$layoutStyle = $atts['layoutstyle'];
+		$hideBanner = isset( $atts['hidebanner'] );
 
-	$forumIcon = isset( $atts['forumicon'] );
-	$forumText = isset( $atts['forumtext'] );
-	$forumLink = isset( $atts['forumlink'] );
+		$emailIcon = isset( $atts['emailicon'] );
+		$emailText = isset( $atts['emailtext'] );
+		$emailLink = isset( $atts['emaillink'] );
 
-	$bannerLinks = array_filter( array(
-		$emailText,
-		$telText,
-		$docText,
-		$forumText
-	) );
+		$telIcon = isset( $atts['telicon'] );
+		$telText = isset( $atts['teltext'] );
+		$telLink = isset( $atts['tellink'] );
 
-	$linksCount = count( $bannerLinks );
-	if( $linksCount > 0 ){
-		$linksWidth = 100 / $linksCount;
-	} else {
-		$linksWidth = 100;
-	}
+		$docIcon = isset( $atts['docicon'] );
+		$docText = isset( $atts['doctext'] );
+		$docLink = isset( $atts['doclink'] );
 
-	$shortcodeOutput = '<div id="faqss-' . $layoutStyle . '">';
+		$forumIcon = isset( $atts['forumicon'] );
+		$forumText = isset( $atts['forumtext'] );
+		$forumLink = isset( $atts['forumlink'] );
 
-		if( $layoutStyle == 'modern' && $hideBanner == 'false' && $linksCount > 0 ){
-			$shortcodeOutput .= '<div id="faqss-banner">';
-				if( !empty( $emailText ) ){
-					$shortcodeOutput .= '<div id="faqss-email" class="faqss-link" style="width: ' . $linksWidth . '%">';
-						$shortcodeOutput .= '<i class="fa fa-' . $emailIcon . '"></i>';
-						$shortcodeOutput .= '<a href="' . $emailLink . '">' . $emailText . '</a>';
-					$shortcodeOutput .= '</div>';
-				}
+		$bannerLinks = array_filter( array(
+			$emailText,
+			$telText,
+			$docText,
+			$forumText
+		) );
 
-				if( !empty( $telText ) ){
-					$shortcodeOutput .= '<div id="faqss-tel" class="faqss-link" style="width: ' . $linksWidth . '%">';
-						$shortcodeOutput .= '<i class="fa fa-' . $telIcon . '"></i>';
-						$shortcodeOutput .= '<a href="' . $telLink . '">' . $telText . '</a>';
-					$shortcodeOutput .= '</div>';
-				}
-
-				if( !empty( $docText ) ){
-					$shortcodeOutput .= '<div id="faqss-doc" class="faqss-link" style="width: ' . $linksWidth . '%">';
-						$shortcodeOutput .= '<i class="fa fa-' . $docIcon . '"></i>';
-						$shortcodeOutput .= '<a href="' . $docLink . '">' . $docText . '</a>';
-					$shortcodeOutput .= '</div>';
-				}
-
-				if( !empty( $forumText ) ){
-					$shortcodeOutput .= '<div id="faqss-forum" class="faqss-link" style="width: ' . $linksWidth . '%">';
-						$shortcodeOutput .= '<i class="fa fa-' . $forumIcon . '"></i>';
-						$shortcodeOutput .= '<a href="' . $forumLink . '">' . $forumText . '</a>';
-					$shortcodeOutput .= '</div>';
-				}
-			$shortcodeOutput .= '</div>';
+		$linksCount = count( $bannerLinks );
+		if( $linksCount > 0 ){
+			$linksWidth = 100 / $linksCount;
+		} else {
+			$linksWidth = 100;
 		}
 
-		if( $layoutStyle == 'simple' ){
+		$shortcodeOutput = '<div id="faqss-' . $layoutStyle . '">';
 
-			$faqssCounter = 0;
-
-			query_posts( array(
-				'post_type' => 'faqss',
-				'order'		=> 'ASC',
-				'showposts' => -1
-			) );
-
-			while( have_posts() ) : the_post();
-				$faqssCounter++;
-				$shortcodeOutput .= '<div class="faqss-item' . ( $faqssCounter % 2 == 0 ? '' : ' faqss-odd' ) . '">';
-					$shortcodeOutput .= '<h6>' . get_the_title() . '</h6>';
-
-					$page_content = apply_filters( 'the_content', get_the_content() );
-					$page_content = str_replace( ']]>', ']]&gt;', $page_content );
-
-					$shortcodeOutput .= $page_content;
-				$shortcodeOutput .= '</div>';
-			endwhile;
-
-		} elseif( $layoutStyle == 'modern' ){
-			$faqss_terms = get_terms( 'faqss_cat', array(
-				'orderby' => 'id',
-				'parent' => 0
-			) );
-
-			$shortcodeOutput .= '<div class="faqss-aside">';
-				if( $faqss_terms ){
-					$shortcodeOutput .= '<ul>';
-					foreach( $faqss_terms as $k => $v ){
-						$shortcodeOutput .= '<li><a href="#' . $v->slug . '"' . ( $k == 0 ? ' class="active"' : '' ) . '>' . $v->name . '</a></li>';
+			if( $layoutStyle == 'modern' && $hideBanner == 'false' && $linksCount > 0 ){
+				$shortcodeOutput .= '<div id="faqss-banner">';
+					if( !empty( $emailText ) ){
+						$shortcodeOutput .= '<div id="faqss-email" class="faqss-link" style="width: ' . $linksWidth . '%">';
+							$shortcodeOutput .= '<i class="fa fa-' . $emailIcon . '"></i>';
+							$shortcodeOutput .= '<a href="' . $emailLink . '">' . $emailText . '</a>';
+						$shortcodeOutput .= '</div>';
 					}
-					$shortcodeOutput .= '</ul>';
-				}
-			$shortcodeOutput .= '</div>';
 
-			if( $faqss_terms ){
-				foreach( $faqss_terms as $k => $v ){
-					$shortcodeOutput .= '<div id="' . $v->slug . '" class="faqss-section"' . ( $k == 0 ? ' style="display: block;"' : ' style="display: none;"' ) . '>';
-						if( !empty( $v->description ) ){
-							$shortcodeOutput .= '<p>' . $v->description . '</p>';
-						}
+					if( !empty( $telText ) ){
+						$shortcodeOutput .= '<div id="faqss-tel" class="faqss-link" style="width: ' . $linksWidth . '%">';
+							$shortcodeOutput .= '<i class="fa fa-' . $telIcon . '"></i>';
+							$shortcodeOutput .= '<a href="' . $telLink . '">' . $telText . '</a>';
+						$shortcodeOutput .= '</div>';
+					}
 
-						$faqssCounter = 0;
+					if( !empty( $docText ) ){
+						$shortcodeOutput .= '<div id="faqss-doc" class="faqss-link" style="width: ' . $linksWidth . '%">';
+							$shortcodeOutput .= '<i class="fa fa-' . $docIcon . '"></i>';
+							$shortcodeOutput .= '<a href="' . $docLink . '">' . $docText . '</a>';
+						$shortcodeOutput .= '</div>';
+					}
 
-						query_posts( array(
-							'post_type' => 'faqss',
-							'tax_query' => array(
-								array(
-									'taxonomy' => 'faqss_cat',
-									'field'    => 'slug',
-									'terms'    => $v->slug,
-								),
-							),
-							'order'		=> 'ASC',
-							'showposts' => -1
-						) );
-
-						while( have_posts() ) : the_post();
-							$faqssCounter++;
-							$shortcodeOutput .= '<div class="faqss-item">';
-								$shortcodeOutput .= '<h6><a href="#" class="faqss-acc">' . get_the_title() . '</a></h6>';
-
-								$page_content = apply_filters( 'the_content', get_the_content() );
-								$page_content = str_replace( ']]>', ']]&gt;', $page_content );
-
-								$shortcodeOutput .= '<div class="faqss-content"' . ( $faqssCounter == 1 ? '' : ' style="display: none;"' ) . '>' . $page_content . '</div>';
-							$shortcodeOutput .= '</div>';
-						endwhile;
-
-					$shortcodeOutput .= '</div>';
-				}
+					if( !empty( $forumText ) ){
+						$shortcodeOutput .= '<div id="faqss-forum" class="faqss-link" style="width: ' . $linksWidth . '%">';
+							$shortcodeOutput .= '<i class="fa fa-' . $forumIcon . '"></i>';
+							$shortcodeOutput .= '<a href="' . $forumLink . '">' . $forumText . '</a>';
+						$shortcodeOutput .= '</div>';
+					}
+				$shortcodeOutput .= '</div>';
 			}
 
-		} else {
-			$shortcodeOutput .= 'Something is wrong with your FAQs Shortcode. Please use our built in shortcode generator to assist you.';
-		}
+			if( $layoutStyle == 'simple' ){
 
-	$shortcodeOutput .= '</div>';
+				$faqssCounter = 0;
 
-	return $shortcodeOutput;
+				query_posts( array(
+					'post_type' => 'faqss',
+					'order'		=> 'ASC',
+					'showposts' => -1
+				) );
+
+				while( have_posts() ) : the_post();
+					$faqssCounter++;
+					$shortcodeOutput .= '<div class="faqss-item' . ( $faqssCounter % 2 == 0 ? '' : ' faqss-odd' ) . '">';
+						$shortcodeOutput .= '<h6>' . get_the_title() . '</h6>';
+
+						$page_content = apply_filters( 'the_content', get_the_content() );
+						$page_content = str_replace( ']]>', ']]&gt;', $page_content );
+
+						$shortcodeOutput .= $page_content;
+					$shortcodeOutput .= '</div>';
+				endwhile;
+
+			} elseif( $layoutStyle == 'modern' ){
+				$faqss_terms = get_terms( 'faqss_cat', array(
+					'orderby' => 'id',
+					'parent' => 0
+				) );
+
+				$shortcodeOutput .= '<div class="faqss-aside">';
+					if( $faqss_terms ){
+						$shortcodeOutput .= '<ul>';
+						foreach( $faqss_terms as $k => $v ){
+							$shortcodeOutput .= '<li><a href="#' . $v->slug . '"' . ( $k == 0 ? ' class="active"' : '' ) . '>' . $v->name . '</a></li>';
+						}
+						$shortcodeOutput .= '</ul>';
+					}
+				$shortcodeOutput .= '</div>';
+
+				if( $faqss_terms ){
+					foreach( $faqss_terms as $k => $v ){
+						$shortcodeOutput .= '<div id="' . $v->slug . '" class="faqss-section"' . ( $k == 0 ? ' style="display: block;"' : ' style="display: none;"' ) . '>';
+							if( !empty( $v->description ) ){
+								$shortcodeOutput .= '<p>' . $v->description . '</p>';
+							}
+
+							$faqssCounter = 0;
+
+							query_posts( array(
+								'post_type' => 'faqss',
+								'tax_query' => array(
+									array(
+										'taxonomy' => 'faqss_cat',
+										'field'    => 'slug',
+										'terms'    => $v->slug,
+									),
+								),
+								'order'		=> 'ASC',
+								'showposts' => -1
+							) );
+
+							while( have_posts() ) : the_post();
+								$faqssCounter++;
+								$shortcodeOutput .= '<div class="faqss-item">';
+									$shortcodeOutput .= '<h6><a href="#" class="faqss-acc">' . get_the_title() . '</a></h6>';
+
+									$page_content = apply_filters( 'the_content', get_the_content() );
+									$page_content = str_replace( ']]>', ']]&gt;', $page_content );
+
+									$shortcodeOutput .= '<div class="faqss-content"' . ( $faqssCounter == 1 ? '' : ' style="display: none;"' ) . '>' . $page_content . '</div>';
+								$shortcodeOutput .= '</div>';
+							endwhile;
+
+						$shortcodeOutput .= '</div>';
+					}
+				}
+
+			} else {
+				$shortcodeOutput .= '<p>Something is wrong with your FAQs Shortcode. Please use our built in shortcode generator to assist you.</p>';
+			}
+
+		$shortcodeOutput .= '</div>';
+
+		return $shortcodeOutput;
+
+	} else {
+		return '<p>These FAQs shortcodes can only be used on pages.</p>';
+	}
 }
 
 add_action( 'wp_enqueue_scripts', 'faqss_scripts' );
 function faqss_scripts(){
-	$page_id = get_post( get_the_ID() ); 
-	$page_content = $page_id->post_content;
+	$page_object = get_post( get_the_ID() ); 
+	$page_content = $page_object->post_content;
 
-	if( is_page() && has_shortcode( $page_content, 'faqss' ) ){
+	if( is_page( get_the_ID() ) && has_shortcode( $page_content, 'faqss' ) ){
 		wp_enqueue_style( 'faqss-font-awesome', plugin_dir_url( __FILE__ ) . 'vendor/font-awesome/4.3.0/css/font-awesome.min.css' );
 		wp_enqueue_style( 'faqss-public-css', plugin_dir_url( __FILE__ ) . 'css/public.min.css', array( 'faqss-font-awesome' ) );
 

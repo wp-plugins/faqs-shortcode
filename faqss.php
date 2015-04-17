@@ -213,17 +213,20 @@ function faqss_shortcode( $atts ){
 
 				$shortcodeOutput .= '<div class="faqss-aside">';
 					if( $faqss_terms ){
+						$faqssTermsCounter = 0;
 						$shortcodeOutput .= '<ul>';
 						foreach( $faqss_terms as $k => $v ){
-							$shortcodeOutput .= '<li><a href="#' . $v->slug . '"' . ( $k == 0 ? ' class="active"' : '' ) . '>' . $v->name . '</a></li>';
+							$shortcodeOutput .= '<li><a href="#' . $v->slug . '"' . ( $faqssTermsCounter == 0 ? ' class="active"' : '' ) . '>' . $v->name . '</a></li>';
+							$faqssTermsCounter++;
 						}
 						$shortcodeOutput .= '</ul>';
 					}
 				$shortcodeOutput .= '</div>';
 
 				if( $faqss_terms ){
+					$faqssTermsCounter = 0;
 					foreach( $faqss_terms as $k => $v ){
-						$shortcodeOutput .= '<div id="' . $v->slug . '" class="faqss-section"' . ( $k == 0 ? ' style="display: block;"' : ' style="display: none;"' ) . '>';
+						$shortcodeOutput .= '<div id="' . $v->slug . '" class="faqss-section"' . ( $faqssTermsCounter == 0 ? ' style="display: block;"' : ' style="display: none;"' ) . '>';
 							if( !empty( $v->description ) ){
 								$shortcodeOutput .= '<p>' . $v->description . '</p>';
 							}
@@ -256,7 +259,32 @@ function faqss_shortcode( $atts ){
 							endwhile;
 
 						$shortcodeOutput .= '</div>';
+						$faqssTermsCounter++;
 					}
+				} else {
+					$shortcodeOutput .= '<div class="faqss-section" style="width: 100%;">';
+
+						$faqssCounter = 0;
+
+						query_posts( array(
+							'post_type' => 'faqss',
+							'order'		=> 'ASC',
+							'showposts' => -1
+						) );
+
+						while( have_posts() ) : the_post();
+							$faqssCounter++;
+							$shortcodeOutput .= '<div class="faqss-item">';
+								$shortcodeOutput .= '<h6><a href="#" class="faqss-acc faqss-fullitems">' . get_the_title() . '</a></h6>';
+
+								$page_content = apply_filters( 'the_content', get_the_content() );
+								$page_content = str_replace( ']]>', ']]&gt;', $page_content );
+
+								$shortcodeOutput .= '<div class="faqss-content"' . ( $faqssCounter == 1 ? '' : ' style="display: none;"' ) . '>' . $page_content . '</div>';
+							$shortcodeOutput .= '</div>';
+						endwhile;
+
+					$shortcodeOutput .= '</div>';
 				}
 
 			} else {

@@ -3,7 +3,7 @@
  * Plugin Name: FAQs Shortcode
  * Plugin URI: https://wordpress.org/plugins/faqs-shortcode/
  * Description: The only FAQs plugin, that actually answers all questions.
- * Version: 0.1
+ * Version: 1.0
  * Author: Yusri Mathews
  * Author URI: http://yusrimathews.co.za/
  * License: GPLv2 or later
@@ -25,6 +25,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+function faqss_activation(){
+	global $current_user;
+	$user_id = $current_user->ID;
+
+	update_user_meta( $user_id, 'faqss_plugin_activation', date( 'F j, Y' ), true );
+	update_user_meta( $user_id, 'faqss_rate_ignore', 'false' );
+	update_user_meta( $user_id, 'faqss_donate_ignore', 'false' );
+}
+register_activation_hook( __FILE__, 'faqss_activation' );
+
+include_once('inc/notices.php');
 
 add_action( 'init', 'faqss_cpt' );
 function faqss_cpt() {
@@ -100,10 +112,11 @@ function faqss_cbtn(){
 
 add_action( 'admin_enqueue_scripts', 'faqss_scripts_admin' );
 function faqss_scripts_admin(){
-	if( get_post_type( get_the_ID() ) == 'page' ){
-		wp_enqueue_style( 'faqss-font-awesome', plugin_dir_url( __FILE__ ) . 'vendor/font-awesome/4.3.0/css/font-awesome.min.css' );
-		wp_enqueue_style( 'faqss-admin-css', plugin_dir_url( __FILE__ ) . 'css/admin.min.css', array( 'faqss-font-awesome' ) );
+	wp_enqueue_style( 'faqss-font-awesome', plugin_dir_url( __FILE__ ) . 'vendor/font-awesome/4.3.0/css/font-awesome.min.css' );
+	wp_enqueue_style( 'faqss-menu-css', plugin_dir_url( __FILE__ ) . 'css/menu.min.css', array( 'faqss-font-awesome' ) );
 
+	if( get_post_type( get_the_ID() ) == 'page' ){
+		wp_enqueue_style( 'faqss-admin-css', plugin_dir_url( __FILE__ ) . 'css/admin.min.css', array( 'faqss-font-awesome' ) );
 		wp_enqueue_script( 'faqss-admin-js', plugin_dir_url( __FILE__ ) . 'js/admin.min.js', array( 'jquery' ) );
 	}
 }
@@ -111,29 +124,32 @@ function faqss_scripts_admin(){
 add_shortcode( 'faqss', 'faqss_shortcode' );
 function faqss_shortcode( $atts ){
 
-	$page_object = get_post( get_the_ID() ); 
-	$page_content = $page_object->post_content;
+	if( !is_404() ){
+		$page_object = get_post( get_the_ID() ); 
+		$page_content = $page_object->post_content;
+	}
 
 	if( is_page( get_the_ID() ) && has_shortcode( $page_content, 'faqss' ) ){
 
 		$layoutStyle = $atts['layoutstyle'];
-		$hideBanner = isset( $atts['hidebanner'] );
 
-		$emailIcon = isset( $atts['emailicon'] );
-		$emailText = isset( $atts['emailtext'] );
-		$emailLink = isset( $atts['emaillink'] );
+		( isset( $atts['hidebanner'] ) ? $hideBanner = $atts['hidebanner'] : $hideBanner = '' );
 
-		$telIcon = isset( $atts['telicon'] );
-		$telText = isset( $atts['teltext'] );
-		$telLink = isset( $atts['tellink'] );
+		( isset( $atts['emailicon'] ) ? $emailIcon = $atts['emailicon'] : $emailIcon = '' );
+		( isset( $atts['emailtext'] ) ? $emailText = $atts['emailtext'] : $emailText = '' );
+		( isset( $atts['emaillink'] ) ? $emailLink = $atts['emaillink'] : $emailLink = '' );
 
-		$docIcon = isset( $atts['docicon'] );
-		$docText = isset( $atts['doctext'] );
-		$docLink = isset( $atts['doclink'] );
+		( isset( $atts['telicon'] ) ? $telIcon = $atts['telicon'] : $telIcon = '' );
+		( isset( $atts['teltext'] ) ? $telText = $atts['teltext'] : $telText = '' );
+		( isset( $atts['tellink'] ) ? $telLink = $atts['tellink'] : $telLink = '' );
 
-		$forumIcon = isset( $atts['forumicon'] );
-		$forumText = isset( $atts['forumtext'] );
-		$forumLink = isset( $atts['forumlink'] );
+		( isset( $atts['docicon'] ) ? $docIcon = $atts['docicon'] : $docIcon = '' );
+		( isset( $atts['doctext'] ) ? $docText = $atts['doctext'] : $docText = '' );
+		( isset( $atts['doclink'] ) ? $docLink = $atts['doclink'] : $docLink = '' );
+
+		( isset( $atts['forumicon'] ) ? $forumIcon = $atts['forumicon'] : $forumIcon = '' );
+		( isset( $atts['forumtext'] ) ? $forumText = $atts['forumtext'] : $forumText = '' );
+		( isset( $atts['forumlink'] ) ? $forumLink = $atts['forumlink'] : $forumLink = '' );
 
 		$bannerLinks = array_filter( array(
 			$emailText,
@@ -205,6 +221,8 @@ function faqss_shortcode( $atts ){
 					$shortcodeOutput .= '</div>';
 				endwhile;
 
+				wp_reset_query();
+
 			} elseif( $layoutStyle == 'modern' ){
 				$faqss_terms = get_terms( 'faqss_cat', array(
 					'orderby' => 'id',
@@ -258,6 +276,8 @@ function faqss_shortcode( $atts ){
 								$shortcodeOutput .= '</div>';
 							endwhile;
 
+							wp_reset_query();
+
 						$shortcodeOutput .= '</div>';
 						$faqssTermsCounter++;
 					}
@@ -284,6 +304,8 @@ function faqss_shortcode( $atts ){
 							$shortcodeOutput .= '</div>';
 						endwhile;
 
+						wp_reset_query();
+
 					$shortcodeOutput .= '</div>';
 				}
 
@@ -302,8 +324,10 @@ function faqss_shortcode( $atts ){
 
 add_action( 'wp_enqueue_scripts', 'faqss_scripts' );
 function faqss_scripts(){
-	$page_object = get_post( get_the_ID() ); 
-	$page_content = $page_object->post_content;
+	if( !is_404() ){
+		$page_object = get_post( get_the_ID() ); 
+		$page_content = $page_object->post_content;
+	}
 
 	if( is_page( get_the_ID() ) && has_shortcode( $page_content, 'faqss' ) ){
 		wp_enqueue_style( 'faqss-font-awesome', plugin_dir_url( __FILE__ ) . 'vendor/font-awesome/4.3.0/css/font-awesome.min.css' );

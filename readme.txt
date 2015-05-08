@@ -1,10 +1,10 @@
 === FAQs Shortcode ===
 Contributors: iammathews
-Donate link: http://yusrimathews.co.za/donate/?project=faqs-shortcode
+Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=yusrimathews%40gmail%2ecom&lc=ZA&item_name=Yusri%20Mathews&item_number=faqs%2dshortcode&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted
 Tags: faq, faqs, shortcode, questions and answers
 Requires at least: 3.9
-Tested up to: 4.1
-Stable tag: 4.1
+Tested up to: 4.2
+Stable tag: 4.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,6 +20,12 @@ Want to contribute? [Fork the GitHub repository](https://github.com/iammathews/f
 
 1. Upload the folder `faqs-shortcode` to the `/wp-content/plugins/` directory
 2. Activate the plugin through the 'Plugins' menu in your WordPress dashboard
+
+= How do I get the FAQs to show? =
+
+Here are just two steps as a guide, which should be of assistance:
+* In your Dashboard, under FAQs you can add the FAQs, which basically just needs a title and content.
+* Edit the page you would like to add the FAQs to, right above the content area there is a "Add FAQs" button, which will generate a shortcode based on the settings you choose.
 
 == Frequently Asked Questions ==
 
@@ -57,6 +63,13 @@ You can add custom CSS through your theme, or child theme and it should overwrit
 4. Modern layout.
 
 == Changelog ==
+
+= 1.0 =
+* Fixed 404 page bug.
+* Added rate/donate admin notices.
+* Fixed continuous loop issue.
+* Added post type menu icon.
+* Fixed PHP isset issue.
 
 = 0.1 =
 * First release.

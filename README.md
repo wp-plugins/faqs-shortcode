@@ -18,4 +18,4 @@ You can contact me with any ideas or suggestions you have here. Also, like any o
 You can say thanks by buying me [Nespresso Capsules] :)
 
 [Support forum]:http://wordpress.org/support/plugin/faqs-shortcode
-[Nespresso Capsules]:http://yusrimathews.co.za/donate/?project=faqs-shortcode
+[Nespresso Capsules]:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=yusrimathews%40gmail%2ecom&lc=ZA&item_name=Yusri%20Mathews&item_number=faqs%2dshortcode&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted

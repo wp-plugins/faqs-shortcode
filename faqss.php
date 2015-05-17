@@ -3,7 +3,7 @@
  * Plugin Name: FAQs Shortcode
  * Plugin URI: https://wordpress.org/plugins/faqs-shortcode/
  * Description: The only FAQs plugin, that actually answers all questions.
- * Version: 1.0
+ * Version: 1.1
  * Author: Yusri Mathews
  * Author URI: http://yusrimathews.co.za/
  * License: GPLv2 or later
@@ -30,7 +30,7 @@ function faqss_activation(){
 	global $current_user;
 	$user_id = $current_user->ID;
 
-	update_user_meta( $user_id, 'faqss_plugin_activation', date( 'F j, Y' ), true );
+	update_user_meta( $user_id, 'faqss_plugin_activation', date( 'F j, Y' ) );
 	update_user_meta( $user_id, 'faqss_rate_ignore', 'false' );
 	update_user_meta( $user_id, 'faqss_donate_ignore', 'false' );
 }

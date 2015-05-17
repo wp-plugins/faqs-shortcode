@@ -64,6 +64,9 @@ You can add custom CSS through your theme, or child theme and it should overwrit
 
 == Changelog ==
 
+= 1.1 =
+* Updated notices logic.
+
 = 1.0 =
 * Fixed 404 page bug.
 * Added rate/donate admin notices.
